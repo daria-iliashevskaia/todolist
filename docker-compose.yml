@@ -1,0 +1,60 @@
+version: '3.9'
+
+volumes:
+  postgres_data:
+  api:
+
+networks:
+  main-local:
+  main-network:
+
+services:
+
+  front:
+    image: sermalenk/skypro-front:version_1
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+    networks:
+      - main-network
+      - main-local
+
+  migrations:
+    build: .
+    volumes:
+      - ./:/app
+    depends_on:
+      - api
+    command: sh -c "python manage.py migrate"
+    networks:
+      - main-local
+
+
+  postgres:
+    image: postgres:14.6-alpine
+    ports:
+      - "5433:5432"
+    env_file:
+      - ./.env
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    networks:
+      - main-local
+
+  api:
+    build: .
+    volumes:
+      - ./:/app
+    restart: always
+    env_file:
+      - ./.env
+    command: sh -c "python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - '8000:8000'
+    depends_on:
+      - postgres
+      - migrations
+    networks:
+      - main-local
+
