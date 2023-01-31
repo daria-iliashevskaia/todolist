@@ -4,9 +4,9 @@ volumes:
   postgres_data:
   api:
 
-networks:
-  main-local:
-  main-network:
+#networks:
+#  main-local:
+#  main-network:
 
 services:
 
@@ -16,19 +16,19 @@ services:
       - "8080:80"
     depends_on:
       - api
-    networks:
-      - main-network
-      - main-local
+#    networks:
+#      - main-network
+#      - main-local
 
   migrations:
     build: .
     volumes:
       - ./:/app
     depends_on:
-      - api
+      - postgres
     command: sh -c "python manage.py migrate"
-    networks:
-      - main-local
+#    networks:
+#      - main-local
 
 
   postgres:
@@ -39,8 +39,8 @@ services:
       - ./.env
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
-    networks:
-      - main-local
+#    networks:
+#      - main-local
 
   api:
     build: .
@@ -55,6 +55,6 @@ services:
     depends_on:
       - postgres
       - migrations
-    networks:
-      - main-local
+#    networks:
+#      - main-local
 
