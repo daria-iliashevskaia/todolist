@@ -1,4 +1,6 @@
 from django.contrib.auth import login, logout
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from rest_framework import permissions
 from rest_framework.generics import CreateAPIView, GenericAPIView, RetrieveUpdateDestroyAPIView, UpdateAPIView
 from rest_framework.response import Response
@@ -12,6 +14,7 @@ class SignupView(CreateAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = CreateUserSerializer
 
+    @ensure_csrf_cookie
     def perform_create(self, serializer):
         super().perform_create(serializer)
         login(
@@ -24,6 +27,7 @@ class SignupView(CreateAPIView):
 class LoginView(GenericAPIView):
     serializer_class = LoginSerializer
 
+    @ensure_csrf_cookie
     def post(self, request, *args, **kwargs):
         s: LoginSerializer = self.get_serializer(data=request.data)
         s.is_valid(raise_exception=True)
@@ -51,5 +55,6 @@ class UpdatePasswordView(UpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = UpdatePasswordSerializer
 
+    @ensure_csrf_cookie
     def get_object(self):
         return self.request.user
