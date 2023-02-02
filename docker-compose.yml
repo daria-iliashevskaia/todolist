@@ -61,7 +61,7 @@ services:
 
 
   front:
-    image: sermalenk/skypro-front:version_1
+    image: sermalenk/skypro-front:lesson-37
     ports:
       - "8080:80"
     depends_on:
