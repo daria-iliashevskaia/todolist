@@ -14,7 +14,7 @@ class SignupView(CreateAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = CreateUserSerializer
 
-    @ensure_csrf_cookie
+    @csrf_exempt
     def perform_create(self, serializer):
         super().perform_create(serializer)
         login(
@@ -27,7 +27,7 @@ class SignupView(CreateAPIView):
 class LoginView(GenericAPIView):
     serializer_class = LoginSerializer
 
-    @ensure_csrf_cookie
+    @csrf_exempt
     def post(self, request, *args, **kwargs):
         s: LoginSerializer = self.get_serializer(data=request.data)
         s.is_valid(raise_exception=True)

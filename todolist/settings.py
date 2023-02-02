@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "rest_framework",
     'social_django',
-    'core'
+    'core',
+    'goals'
 ]
 
 MIDDLEWARE = [
@@ -141,8 +142,6 @@ AUTHENTICATION_BACKENDS = (
 
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8080', 'https://*.127.0.0.1:8080']
-CSRF_COOKIE_SECURE = False
-CSRF_COOKIE_HTTPONLY = False
 
 
 SOCIAL_AUTH_JSONFIELD_ENABLED = True
