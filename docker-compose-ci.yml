@@ -1,0 +1,79 @@
+version: '3.9'
+
+volumes:
+  postgres_data:
+  api:
+
+networks:
+  main-local:
+  main-network:
+
+services:
+  postgres:
+    image: postgres:14.6-alpine
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+      PG_DATA: postgres_data
+      POSTGRES_INITDB_ARGS: '-A md5'
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    networks:
+      - main-local
+
+  migrations:
+    build: .
+    volumes:
+      - ./:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: sh -c "python manage.py migrate"
+    networks:
+      - main-local
+
+  api:
+    image: diliashevskaia/todolist:version-1
+    volumes:
+      - ./:/app
+    restart: always
+    env_file:
+      - ./.env
+    command: sh -c "python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - '8000:8000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
+    networks:
+      - main-local
+      - main-network
+
+
+  front:
+    image: sermalenk/skypro-front:lesson-38
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+    networks:
+      - main-network
+      - main-local
+
+
+
+
+
+
+
+
