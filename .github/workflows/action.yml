@@ -1,9 +1,6 @@
 name: Build_and_deploy_action
 
-on:
-  push:
-    branches:
-      -master
+on: [push]
 
 jobs:
   build_and_push:
