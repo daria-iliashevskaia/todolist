@@ -59,6 +59,17 @@ services:
       - main-local
       - main-network
 
+  bot:
+    build:
+      context: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
+    volumes:
+      - ./:/app
+    command: python manage.py runbot
 
   front:
     image: sermalenk/skypro-front:lesson-38
