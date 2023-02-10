@@ -48,7 +48,7 @@ services:
     restart: always
     command: sh -c "python manage.py runserver 0.0.0.0:8000"
     ports:
-      - '8000:8000'
+      - "8000:8000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -58,16 +58,16 @@ services:
       - main-local
       - main-network
 
-#  bot:
-#    image: diliashevskaia/todolist:$GITHUB_REF_NAME-$GITHUB_RUN_ID
-#    depends_on:
-#      postgres:
-#        condition: service_healthy
-#      migrations:
-#        condition: service_completed_successfully
-#    volumes:
-#      - ./.env:/app/.env
-#    command: python manage.py runbot
+  bot:
+    image: diliashevskaia/todolist:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
+    volumes:
+      - ./.env:/app/.env
+    command: python manage.py runbot
 
   front:
     image: sermalenk/skypro-front:lesson-38
