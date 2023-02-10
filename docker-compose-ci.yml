@@ -9,6 +9,7 @@ networks:
   main-network:
 
 services:
+
   postgres:
     image: postgres:14.6-alpine
     ports:
@@ -32,7 +33,7 @@ services:
   migrations:
     build: .
     volumes:
-      - ./:/app
+      - ./.env:/app/.env
     depends_on:
       postgres:
         condition: service_healthy
@@ -41,9 +42,9 @@ services:
       - main-local
 
   api:
-    image: diliashevskaia/todolist:version-1
+    image: diliashevskaia/todolist:$GITHUB_REF_NAME-$GITHUB_RUN_ID
     volumes:
-      - ./:/app
+      - ./.env:/app/.env
     restart: always
     env_file:
       - ./.env
@@ -58,7 +59,17 @@ services:
     networks:
       - main-local
       - main-network
-
+      -
+  bot:
+    image: diliashevskaia/todolist:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
+    volumes:
+      - ./.env:/app/.env
+    command: python manage.py runbot
 
   front:
     image: sermalenk/skypro-front:lesson-38
