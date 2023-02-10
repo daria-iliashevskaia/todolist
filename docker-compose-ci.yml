@@ -59,7 +59,7 @@ services:
     networks:
       - main-local
       - main-network
-      -
+
   bot:
     image: diliashevskaia/todolist:$GITHUB_REF_NAME-$GITHUB_RUN_ID
     depends_on:
