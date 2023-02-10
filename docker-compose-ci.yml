@@ -18,8 +18,8 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
       POSTGRES_DB: postgres
-      PG_DATA: postgres_data
-      POSTGRES_INITDB_ARGS: '-A md5'
+#      PG_DATA: postgres_data
+#      POSTGRES_INITDB_ARGS: '-A md5'
     healthcheck:
       test: pg_isready -U postgres
       interval: 5s
