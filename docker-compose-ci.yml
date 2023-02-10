@@ -31,7 +31,7 @@ services:
       - main-local
 
   migrations:
-    build: .
+    image: diliashevskaia/todolist:$GITHUB_REF_NAME-$GITHUB_RUN_ID
     volumes:
       - ./.env:/app/.env
     depends_on:
