@@ -2,7 +2,6 @@ version: '3.9'
 
 volumes:
   postgres_data:
-  api:
 
 networks:
   main-local:
