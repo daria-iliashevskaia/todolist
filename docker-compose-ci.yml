@@ -1,125 +1,66 @@
-#version: '3.9'
-#
-#volumes:
-#  postgres_data:
-#  api:
-#
-#networks:
-#  main-local:
-#  main-network:
-#
-#services:
-#
-#  postgres:
-#    image: postgres:14.6-alpine
-#    environment:
-#      POSTGRES_PASSWORD: postgres
-#      POSTGRES_USER: postgres
-#      POSTGRES_DB: postgres
-#    healthcheck:
-#      test: pg_isready -U postgres
-#      interval: 5s
-#      timeout: 5s
-#      retries: 5
-#    volumes:
-#      - ./postgres_data:/var/lib/postgresql/data
-#    networks:
-#      - main-local
-#
-#  migrations:
-#    image: diliashevskaia/todolist:$GITHUB_REF_NAME-$GITHUB_RUN_ID
-#    volumes:
-#      - ./.env:/app/.env
-#    depends_on:
-#      postgres:
-#        condition: service_healthy
-#    command: sh -c "python manage.py migrate"
-#    networks:
-#      - main-local
-#
-#  api:
-#    image: diliashevskaia/todolist:$GITHUB_REF_NAME-$GITHUB_RUN_ID
-#    volumes:
-#      - ./.env:/app/.env
-#    restart: always
-#    command: sh -c "python manage.py runserver 0.0.0.0:8000"
-#    ports:
-#      - "8000:8000"
-#    depends_on:
-#      postgres:
-#        condition: service_healthy
-#      migrations:
-#        condition: service_completed_successfully
-#    networks:
-#      - main-local
-#      - main-network
-#
-#  bot:
-#    image: diliashevskaia/todolist:$GITHUB_REF_NAME-$GITHUB_RUN_ID
-#    depends_on:
-#      postgres:
-#        condition: service_healthy
-#      migrations:
-#        condition: service_completed_successfully
-#    volumes:
-#      - ./.env:/app/.env
-#    command: python manage.py runbot
-#
-#  front:
-#    image: sermalenk/skypro-front:lesson-38
-#    ports:
-#      - "8080:80"
-#    depends_on:
-#      - api
-#    networks:
-#      - main-network
-#      - main-local
-
-version: "3.8"
+version: '3.9'
 
 volumes:
-  postgres:
+  postgres_data:
+  api:
+
+networks:
+  main-local:
+  main-network:
 
 services:
+
   postgres:
-    image: 14.6-alpine
+    image: postgres:14.6-alpine
     environment:
-      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
-      POSTGRES_DB: $POSTGRES_NAME
-      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: pg_isready -U postgres
       interval: 5s
       timeout: 5s
       retries: 5
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+      - ./postgres_data:/var/lib/postgresql/data
+    networks:
+      - main-local
 
   migrations:
     image: diliashevskaia/todolist:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+    volumes:
+      - ./.env:/app/.env
     depends_on:
       postgres:
         condition: service_healthy
-    volumes:
-      - ./.env:/app/.env
-    command: python manage.py migrate
+    command: sh -c "python manage.py migrate"
+    networks:
+      - main-local
 
   api:
     image: diliashevskaia/todolist:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+    volumes:
+      - ./.env:/app/.env
+    restart: always
+    command: sh -c "python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
     depends_on:
       postgres:
         condition: service_healthy
       migrations:
         condition: service_completed_successfully
-    volumes:
-      - ./.env:/app/.env
-    command: python manage.py runserver 0.0.0.0:8000
+    networks:
+      - main-local
+      - main-network
 
   bot:
     image: diliashevskaia/todolist:$GITHUB_REF_NAME-$GITHUB_RUN_ID
     depends_on:
       postgres:
         condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
     volumes:
       - ./.env:/app/.env
     command: python manage.py runbot
@@ -130,6 +71,10 @@ services:
       - "8080:80"
     depends_on:
       - api
+    networks:
+      - main-network
+      - main-local
+
 
 
 
